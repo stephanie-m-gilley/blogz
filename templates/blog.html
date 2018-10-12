@@ -1,14 +1,16 @@
 {% extends "base.html" %}
 
 {% block content %}
+<h1 align="center">Build a Blog </h1>
 <form action="/blog" method="POST"></form>
     {% if blogs|length == 0 %}
     <p>No blogs yet</p>
     {% else %}
 
         {% for blog in blogs %}
-        <p>{{blog.title}}</p>
+        <a href="?id={{blog.id}}"><h2>{{blog.title}}</h2></a>
         <p>{{blog.body}}</p>
+        <hr />
 
         {% endfor %}
 {% endif %}

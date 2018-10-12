@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, render_template, sessions
+from flask import Flask, request, redirect, render_template, sessions, flash
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -13,35 +13,48 @@ class Blog(db.Model):
     title = db.Column(db.String(40))
     body = db.Column(db.String(400))
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, title, body):
+        self.title = title
+        self.body = body
+        
 
 @app.route('/newpost', methods=['POST', 'GET'])
 def add_blog():
 
+    title_error = ""
+    body_error = ""
+
     if request.method == 'POST':
         title = request.form['title']
         body = request.form['body']
-        new_blog = Blog(title, body)
-        db.session.add(new_blog)
-        db.session.commit()
-    
 
-        return redirect('/')
-    return render_template('newpost.html')
+        if len(title) == 0:
+            title_error = "Title can not be left blank"
+        if len(body) == 0:
+            body_error = "Blog body can not be left blank"
+
+        if not title_error and not body_error:
+            new_blog = Blog(title, body)
+            db.session.add(new_blog)
+            db.session.commit()
+            id = new_blog.id
+            return redirect('/blog?id={}'.format(id))
+
+    return render_template('newpost.html', title_error=title_error, body_error=body_error)
 
 @app.route('/blog', methods=['POST', 'GET'])
 def home():
-    blogs = Blog.query.get(new_blog)
-    return render_template('blog.html')
+        
+    blogs = Blog.query.all()
+    id = request.args.get("id")
+    if id is not None:
+        blog = Blog.query.get(str(id))
+        return render_template('single_blog.html', blog=blog)
 
 
+    return render_template('blog.html', blogs=blogs)
 
-#@app.route('/', methods=['POST', 'GET'])
-#def index():
 
-    #blogs =
-    #return render_template('blog.html')
         
 
 
