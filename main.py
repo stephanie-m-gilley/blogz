@@ -52,7 +52,6 @@ def login():
 
     return render_template('login.html')
 
-    #the bs below is no worky and buggy AF!  >:(
 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
@@ -78,12 +77,12 @@ def signup():
         if len(username) < 3:
             flash('Username must be more than 3 characters')
 
-        if len(password) == 0: #only catching this 1.... why!?
+        if len(password) == 0:
             flash('Required Field')
         if len(password) < 3 and len(password) >= 1:
             flash('Must be more than 3 characters')
         if password != verify:
-            flash('Passwords do not match')#logs someone in even with just a password
+            flash('Passwords do not match')
 
         if username == existing_user:
             flash('Existing User')
